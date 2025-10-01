@@ -132,6 +132,7 @@ import gregtech.common.tileentities.machines.basic.MTETurboCharger;
 import gregtech.common.tileentities.machines.basic.MTEWorldAccelerator;
 import gregtech.common.tileentities.machines.long_distance.MTELongDistancePipelineFluid;
 import gregtech.common.tileentities.machines.long_distance.MTELongDistancePipelineItem;
+import gregtech.common.tileentities.machines.multi.MTEAdvImplosionCompressorModern;
 import gregtech.common.tileentities.machines.multi.MTEAirFilter1;
 import gregtech.common.tileentities.machines.multi.MTEAirFilter2;
 import gregtech.common.tileentities.machines.multi.MTEAirFilter3;
@@ -170,7 +171,6 @@ import gregtech.common.tileentities.machines.multi.MTEIndustrialExtruderModern;
 import gregtech.common.tileentities.machines.multi.MTEIndustrialFishingPondModern;
 import gregtech.common.tileentities.machines.multi.MTEIndustrialForgeHammerModern;
 import gregtech.common.tileentities.machines.multi.MTEIndustrialFormerModern;
-import gregtech.common.tileentities.machines.multi.MTEIndustrialImplosionCompressorModern;
 import gregtech.common.tileentities.machines.multi.MTEIndustrialLaserEngraver;
 import gregtech.common.tileentities.machines.multi.MTEIndustrialMacerationStackModern;
 import gregtech.common.tileentities.machines.multi.MTEIndustrialMixerModern;
@@ -726,7 +726,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "industrial.fishpond.controller.tier.single",
                 "Zhuhai - Fishing Port").getStackForm(1));
         ItemList.Controller_Advanced_ImplosionCompressor_Modern.set(
-            new MTEIndustrialImplosionCompressorModern(
+            new MTEAdvImplosionCompressorModern(
                 Advanced_ImplosionCompressor_Modern.ID,
                 "multimachine.adv.implosioncompressor",
                 "Density^2").getStackForm(1));

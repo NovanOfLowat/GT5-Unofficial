@@ -301,6 +301,8 @@ public enum Casings implements ICasing {
         (() -> ModBlocks.blockCasings3Misc, 9,gtpp(2, 9)),
     IndustrialForgeHammerCasing
         (() -> ModBlocks.blockCasings5Misc, 6, gtpp(1, 11)),
+    RobustTungstenSteelCasing
+        (() -> GregTechAPI.sBlockCasings4, 0, ((BlockCasings4) GregTechAPI.sBlockCasings4).getTextureIndex(0)),
 
     MagicCasing
         (() -> Loaders.magicCasing, 0, -1),
