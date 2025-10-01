@@ -51,7 +51,7 @@ import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
 import gregtech.api.util.OverclockCalculator;
-import gregtech.api.util.TooltipTier;
+import gregtech.api.util.tooltip.TooltipTier;
 import gregtech.common.misc.GTStructureChannels;
 import gtPlusPlus.api.recipe.GTPPRecipeMaps;
 import gtPlusPlus.core.block.ModBlocks;
@@ -168,7 +168,7 @@ public class MTEMegaAlloyBlastSmelter extends MTEExtendedPowerMultiBlockBase<MTE
             @NotNull
             @Override
             protected CheckRecipeResult validateRecipe(@NotNull GTRecipe recipe) {
-                if (glassTier < GTUtility.getTier(recipe.mEUt)) {
+                if (glassTier < VoltageIndex.UMV && glassTier < GTUtility.getTier(recipe.mEUt)) {
                     return CheckRecipeResultRegistry.insufficientMachineTier(GTUtility.getTier(recipe.mEUt));
                 }
                 return CheckRecipeResultRegistry.SUCCESSFUL;
@@ -210,7 +210,7 @@ public class MTEMegaAlloyBlastSmelter extends MTEExtendedPowerMultiBlockBase<MTE
         if (!checkPiece("main", 5, 16, 0)) return false;
         if (coilType == CoilType.BasicCoil) coilLevel = HeatingCoilLevel.None;
         if (mMufflerHatches.size() != 1) return false;
-        if (this.glassTier < VoltageIndex.UEV && !getExoticAndNormalEnergyHatchList().isEmpty()) {
+        if (this.glassTier < VoltageIndex.UMV && !getExoticAndNormalEnergyHatchList().isEmpty()) {
             for (MTEHatch hatchEnergy : getExoticAndNormalEnergyHatchList()) {
                 if (this.glassTier < hatchEnergy.mTier) {
                     return false;
@@ -275,8 +275,8 @@ public class MTEMegaAlloyBlastSmelter extends MTEExtendedPowerMultiBlockBase<MTE
                     + " Speed Bonus per "
                     + EnumChatFormatting.WHITE
                     + "Heating Coil Tier")
-            .addInfo("Speed bonus is only applicable if equivalent or better glass tier is present.")
-            .addInfo("Furthermore, a multiplicative energy discount is granted for using coils above the recipe tier.")
+            .addInfo("Speed bonus is only applicable if equivalent or better glass tier is present")
+            .addInfo("Furthermore, a multiplicative energy discount is granted for using coils above the recipe tier")
             .addDynamicEuEffInfo(0.05f, TooltipTier.COIL)
             .addInfo(
                 EnumChatFormatting.ITALIC
@@ -288,7 +288,9 @@ public class MTEMegaAlloyBlastSmelter extends MTEExtendedPowerMultiBlockBase<MTE
             .addMinGlassForLaser(VoltageIndex.UV)
             .addUnlimitedTierSkips()
             .addInfo(
-                EnumChatFormatting.ITALIC + "\"all it does is make metals hot\""
+                EnumChatFormatting.RED + ""
+                    + EnumChatFormatting.ITALIC
+                    + "\"all it does is make metals hot\""
                     + EnumChatFormatting.RESET
                     + EnumChatFormatting.GRAY)
             .addPollutionAmount(getPollutionPerSecond(null))

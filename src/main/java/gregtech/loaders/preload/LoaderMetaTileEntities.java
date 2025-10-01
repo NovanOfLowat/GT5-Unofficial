@@ -1,5 +1,7 @@
 package gregtech.loaders.preload;
 
+import static com.gtnewhorizon.gtnhlib.util.AnimatedTooltipHandler.addItemTooltip;
+import static com.gtnewhorizon.gtnhlib.util.AnimatedTooltipHandler.chain;
 import static gregtech.api.enums.MetaTileEntityIDs.*;
 import static gregtech.api.enums.Mods.Forestry;
 import static gregtech.api.enums.Mods.Thaumcraft;
@@ -46,6 +48,9 @@ import static gregtech.api.recipe.RecipeMaps.wiremillRecipes;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import gregtech.api.enums.GTValues;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.MachineType;
 import gregtech.api.enums.SoundResource;
@@ -127,6 +132,67 @@ import gregtech.common.tileentities.machines.basic.MTETurboCharger;
 import gregtech.common.tileentities.machines.basic.MTEWorldAccelerator;
 import gregtech.common.tileentities.machines.long_distance.MTELongDistancePipelineFluid;
 import gregtech.common.tileentities.machines.long_distance.MTELongDistancePipelineItem;
+import gregtech.common.tileentities.machines.multi.MTEAirFilter1;
+import gregtech.common.tileentities.machines.multi.MTEAirFilter2;
+import gregtech.common.tileentities.machines.multi.MTEAirFilter3;
+import gregtech.common.tileentities.machines.multi.MTEAssemblyLine;
+import gregtech.common.tileentities.machines.multi.MTEBrickedBlastFurnace;
+import gregtech.common.tileentities.machines.multi.MTEChamberCentrifuge;
+import gregtech.common.tileentities.machines.multi.MTECharcoalPit;
+import gregtech.common.tileentities.machines.multi.MTECleanroom;
+import gregtech.common.tileentities.machines.multi.MTEConcreteBackfiller1;
+import gregtech.common.tileentities.machines.multi.MTEConcreteBackfiller2;
+import gregtech.common.tileentities.machines.multi.MTEDecayWarehouse;
+import gregtech.common.tileentities.machines.multi.MTEDieselEngine;
+import gregtech.common.tileentities.machines.multi.MTEDistillationTower;
+import gregtech.common.tileentities.machines.multi.MTEElectricBlastFurnace;
+import gregtech.common.tileentities.machines.multi.MTEEntropicProcessor;
+import gregtech.common.tileentities.machines.multi.MTEExtremeDieselEngine;
+import gregtech.common.tileentities.machines.multi.MTEFusionComputer1;
+import gregtech.common.tileentities.machines.multi.MTEFusionComputer2;
+import gregtech.common.tileentities.machines.multi.MTEFusionComputer3;
+import gregtech.common.tileentities.machines.multi.MTEHeatExchanger;
+import gregtech.common.tileentities.machines.multi.MTEImplosionCompressor;
+import gregtech.common.tileentities.machines.multi.MTEIndustrialBrewery;
+import gregtech.common.tileentities.machines.multi.MTEIndustrialElectromagneticSeparator;
+import gregtech.common.tileentities.machines.multi.MTEIndustrialExtractor;
+import gregtech.common.tileentities.machines.multi.MTEIndustrialLaserEngraver;
+import gregtech.common.tileentities.machines.multi.MTEIntegratedOreFactory;
+import gregtech.common.tileentities.machines.multi.MTELargeBoilerBronze;
+import gregtech.common.tileentities.machines.multi.MTELargeBoilerSteel;
+import gregtech.common.tileentities.machines.multi.MTELargeBoilerTitanium;
+import gregtech.common.tileentities.machines.multi.MTELargeBoilerTungstenSteel;
+import gregtech.common.tileentities.machines.multi.MTELargeChemicalReactor;
+import gregtech.common.tileentities.machines.multi.MTELargeFluidExtractor;
+import gregtech.common.tileentities.machines.multi.MTELargeMolecularAssembler;
+import gregtech.common.tileentities.machines.multi.MTELargeTurbineGas;
+import gregtech.common.tileentities.machines.multi.MTELargeTurbineHPSteam;
+import gregtech.common.tileentities.machines.multi.MTELargeTurbinePlasma;
+import gregtech.common.tileentities.machines.multi.MTELargeTurbineSteam;
+import gregtech.common.tileentities.machines.multi.MTEMultiAutoclave;
+import gregtech.common.tileentities.machines.multi.MTEMultiCanner;
+import gregtech.common.tileentities.machines.multi.MTEMultiFurnace;
+import gregtech.common.tileentities.machines.multi.MTEMultiLathe;
+import gregtech.common.tileentities.machines.multi.MTEMultiSolidifier;
+import gregtech.common.tileentities.machines.multi.MTENanoForge;
+import gregtech.common.tileentities.machines.multi.MTEOilCracker;
+import gregtech.common.tileentities.machines.multi.MTEOilDrill1;
+import gregtech.common.tileentities.machines.multi.MTEOilDrill2;
+import gregtech.common.tileentities.machines.multi.MTEOilDrill3;
+import gregtech.common.tileentities.machines.multi.MTEOilDrill4;
+import gregtech.common.tileentities.machines.multi.MTEOilDrillInfinite;
+import gregtech.common.tileentities.machines.multi.MTEOreDrillingPlant1;
+import gregtech.common.tileentities.machines.multi.MTEOreDrillingPlant2;
+import gregtech.common.tileentities.machines.multi.MTEOreDrillingPlant3;
+import gregtech.common.tileentities.machines.multi.MTEOreDrillingPlant4;
+import gregtech.common.tileentities.machines.multi.MTEPCBFactory;
+import gregtech.common.tileentities.machines.multi.MTEPlasmaForge;
+import gregtech.common.tileentities.machines.multi.MTEPyrolyseOven;
+import gregtech.common.tileentities.machines.multi.MTEResearchCompleter;
+import gregtech.common.tileentities.machines.multi.MTESolarFactory;
+import gregtech.common.tileentities.machines.multi.MTETranscendentPlasmaMixer;
+import gregtech.common.tileentities.machines.multi.MTEVacuumFreezer;
+import gregtech.common.tileentities.machines.multi.MTEWormholeGenerator;
 import gregtech.common.tileentities.machines.multi.compressor.MTEBlackHoleCompressor;
 import gregtech.common.tileentities.machines.multi.compressor.MTEBlackHoleUtility;
 import gregtech.common.tileentities.machines.multi.compressor.MTEHIPCompressor;
@@ -470,28 +536,22 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
 
         // Converter recipes in case you had old one lying around
         ItemList.OilDrill1.set(
-            new MTEOilDrill1(MULTIBLOCK_PUMP_MKI_CONTROLLER.ID, "multimachine.oildrill1", "Oil/Gas/Fluid Drilling Rig")
+            new MTEOilDrill1(MULTIBLOCK_PUMP_MKI_CONTROLLER.ID, "multimachine.oildrill1", "Fluid Drilling Rig")
                 .getStackForm(1));
         ItemList.OilDrill2.set(
-            new MTEOilDrill2(
-                MULTILOCK_PUMP_MKII_CONTROLLER.ID,
-                "multimachine.oildrill2",
-                "Oil/Gas/Fluid Drilling Rig II").getStackForm(1));
+            new MTEOilDrill2(MULTILOCK_PUMP_MKII_CONTROLLER.ID, "multimachine.oildrill2", "Fluid Drilling Rig II")
+                .getStackForm(1));
         ItemList.OilDrill3.set(
-            new MTEOilDrill3(
-                MULTILOCK_PUMP_MKIII_CONTROLLER.ID,
-                "multimachine.oildrill3",
-                "Oil/Gas/Fluid Drilling Rig III").getStackForm(1));
+            new MTEOilDrill3(MULTILOCK_PUMP_MKIII_CONTROLLER.ID, "multimachine.oildrill3", "Fluid Drilling Rig III")
+                .getStackForm(1));
         ItemList.OilDrill4.set(
-            new MTEOilDrill4(
-                MULTILOCK_PUMP_MKIV_CONTROLLER.ID,
-                "multimachine.oildrill4",
-                "Oil/Gas/Fluid Drilling Rig IV").getStackForm(1));
+            new MTEOilDrill4(MULTILOCK_PUMP_MKIV_CONTROLLER.ID, "multimachine.oildrill4", "Fluid Drilling Rig IV")
+                .getStackForm(1));
         ItemList.OilDrillInfinite.set(
             new MTEOilDrillInfinite(
                 MULTIBLOCK_PUMP_INFINITE_CONTROLLER.ID,
                 "§c§lDEPRECATED§7 - " + "multimachine.oildrillinfinite",
-                "§c§lDEPRECATED§7 - " + "Infinite Oil/Gas/Fluid Drilling Rig").getStackForm(1));
+                "§c§lDEPRECATED§7 - " + "Infinite Fluid Drilling Rig").getStackForm(1));
 
         ItemList.ConcreteBackfiller1.set(
             new MTEConcreteBackfiller1(
@@ -552,11 +612,8 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
             new MTEPCBFactory(PCB_FACTORY_CONTROLLER.ID, "multimachine.pcbfactory", "PCB Factory").getStackForm(1));
         ItemList.NanoForge
             .set(new MTENanoForge(NANO_FORGE_CONTROLLER.ID, "multimachine.nanoforge", "Nano Forge").getStackForm(1));
-        ItemList.Machine_Multi_DroneCentre.set(
-            new MTEDroneCentre(
-                Drone_Centre.ID,
-                "§c§lDEPRECATED§7 - " + "multimachine_DroneCentre",
-                "§c§lDEPRECATED§7 - " + "Drone Centre").getStackForm(1));
+        ItemList.Machine_Multi_DroneCentre
+            .set(new MTEDroneCentre(Drone_Centre.ID, "multimachine_DroneCentre", "Drone Centre").getStackForm(1));
 
         ItemList.Machine_Multi_IndustrialElectromagneticSeparator.set(
             new MTEIndustrialElectromagneticSeparator(
@@ -617,6 +674,19 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
         ItemList.Machine_Multi_IndustrialBrewery.set(
             new MTEIndustrialBrewery(INDUSTRIAL_BREWERY_CONTROLLER.ID, "multimachine.brewery", "Big Barrel Brewery")
                 .getStackForm(1));
+
+        ItemList.Machine_Multi_ChamberCentrifuge.set(
+            new MTEChamberCentrifuge(
+                CHAMBER_CENTRIFUGE_CONTROLLER.ID,
+                "multimachine.chambercentrifuge",
+                "Spinmatron-2737").getStackForm(1));
+        addItemTooltip(
+            ItemList.Machine_Multi_ChamberCentrifuge.get(1),
+            chain(
+                () -> "Authors: ",
+                GTValues.fancyAuthorChrom,
+                () -> EnumChatFormatting.GRAY + " & ",
+                GTValues.AuthorNoc));
 
         ItemList.Machine_Multi_Autoclave.set(
             new MTEMultiAutoclave(MULTI_AUTOCLAVE_CONTROLLER.ID, "multimachine.autoclave", "Industrial Autoclave")
@@ -916,7 +986,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "UNBOXINATOR").getStackForm(1L));
 
@@ -931,7 +1001,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "UNBOXINATOR").getStackForm(1L));
 
@@ -946,7 +1016,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "UNBOXINATOR").getStackForm(1L));
 
@@ -961,7 +1031,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "UNBOXINATOR").getStackForm(1L));
 
@@ -976,7 +1046,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "UNBOXINATOR").getStackForm(1L));
 
@@ -991,7 +1061,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "UNBOXINATOR").getStackForm(1L));
 
@@ -1006,7 +1076,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "UNBOXINATOR").getStackForm(1L));
 
@@ -1021,7 +1091,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "UNBOXINATOR").getStackForm(1L));
     }
@@ -1039,7 +1109,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1054,7 +1124,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1069,7 +1139,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1084,7 +1154,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1099,7 +1169,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1114,7 +1184,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1129,7 +1199,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1144,7 +1214,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1159,7 +1229,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1174,7 +1244,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1189,7 +1259,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
 
@@ -1204,7 +1274,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ASSEMBLER").getStackForm(1L));
     }
@@ -1221,7 +1291,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1236,7 +1306,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1251,7 +1321,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1266,7 +1336,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1281,7 +1351,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1296,7 +1366,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1311,7 +1381,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1326,7 +1396,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1341,7 +1411,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1356,7 +1426,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1371,7 +1441,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
 
@@ -1386,7 +1456,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 1000,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_REPLICATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AMPLIFAB").getStackForm(1L));
     }
@@ -2586,7 +2656,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2601,7 +2671,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2616,7 +2686,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2631,7 +2701,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2646,7 +2716,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2661,7 +2731,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2676,7 +2746,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2691,7 +2761,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2706,7 +2776,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2721,7 +2791,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2736,7 +2806,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
 
@@ -2751,7 +2821,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_BATH").getStackForm(1L));
     }
@@ -2768,7 +2838,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2783,7 +2853,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2798,7 +2868,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2813,7 +2883,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2828,7 +2898,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2843,7 +2913,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2858,7 +2928,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2873,7 +2943,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2888,7 +2958,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2903,7 +2973,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2918,7 +2988,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2933,7 +3003,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CHEMICAL_REACTOR").getStackForm(1L));
 
@@ -2951,7 +3021,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -2966,7 +3036,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -2981,7 +3051,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -2996,7 +3066,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -3011,7 +3081,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -3026,7 +3096,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -3041,7 +3111,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -3056,7 +3126,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -3071,7 +3141,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -3086,7 +3156,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -3101,7 +3171,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
 
@@ -3116,7 +3186,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CHEMICAL,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FERMENTER").getStackForm(1L));
     }
@@ -3133,7 +3203,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3148,7 +3218,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3163,7 +3233,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3178,7 +3248,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3193,7 +3263,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3208,7 +3278,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3223,7 +3293,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3238,7 +3308,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3253,7 +3323,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3268,7 +3338,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3283,7 +3353,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
 
@@ -3298,7 +3368,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_CANNER").getStackForm(1L));
     }
@@ -3497,7 +3567,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3512,7 +3582,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3527,7 +3597,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3542,7 +3612,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3557,7 +3627,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3572,7 +3642,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3587,7 +3657,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3602,7 +3672,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3617,7 +3687,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3632,7 +3702,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3647,7 +3717,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
 
@@ -3662,7 +3732,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BOILER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_HEATER").getStackForm(1L));
     }
@@ -3679,7 +3749,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3694,7 +3764,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3709,7 +3779,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3724,7 +3794,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3739,7 +3809,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3754,7 +3824,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3769,7 +3839,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3784,7 +3854,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3799,7 +3869,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3814,7 +3884,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3829,7 +3899,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
 
@@ -3844,7 +3914,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 9,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_MIXER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MIXER").getStackForm(1L));
     }
@@ -3861,7 +3931,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3876,7 +3946,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3891,7 +3961,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3906,7 +3976,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3921,7 +3991,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3936,7 +4006,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3951,7 +4021,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3966,7 +4036,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3981,7 +4051,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -3996,7 +4066,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -4011,7 +4081,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -4026,7 +4096,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "AUTOCLAVE").getStackForm(1L));
 
@@ -4044,7 +4114,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4059,7 +4129,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4074,7 +4144,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4089,7 +4159,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4104,7 +4174,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4119,7 +4189,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4134,7 +4204,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4149,7 +4219,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4164,7 +4234,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4179,7 +4249,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4194,7 +4264,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
 
@@ -4209,7 +4279,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "BENDER").getStackForm(1L));
     }
@@ -4226,7 +4296,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4241,7 +4311,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4256,7 +4326,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4271,7 +4341,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4286,7 +4356,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4301,7 +4371,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4316,7 +4386,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4331,7 +4401,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4346,7 +4416,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4361,7 +4431,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4376,7 +4446,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4391,7 +4461,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_COMPRESSOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "COMPRESSOR").getStackForm(1L));
 
@@ -4406,10 +4476,10 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 MachineType.CUTTING_MACHINE.tooltipDescription(),
                 RecipeMaps.cutterRecipes,
-                1,
+                2,
                 2,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4424,7 +4494,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4439,7 +4509,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4454,7 +4524,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4469,7 +4539,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4484,7 +4554,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4499,7 +4569,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4514,7 +4584,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4529,7 +4599,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4544,7 +4614,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4559,7 +4629,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4574,7 +4644,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 4,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CUTTER").getStackForm(1L));
 
@@ -4667,7 +4737,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GT_MACHINES_DISTILLERY_LOOP,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "DISTILLERY").getStackForm(1L));
 
@@ -4682,7 +4752,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GT_MACHINES_DISTILLERY_LOOP,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "DISTILLERY").getStackForm(1L));
 
@@ -4697,7 +4767,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GT_MACHINES_DISTILLERY_LOOP,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "DISTILLERY").getStackForm(1L));
 
@@ -4712,7 +4782,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GT_MACHINES_DISTILLERY_LOOP,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "DISTILLERY").getStackForm(1L));
 
@@ -4727,7 +4797,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GT_MACHINES_DISTILLERY_LOOP,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "DISTILLERY").getStackForm(1L));
 
@@ -4742,7 +4812,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GT_MACHINES_DISTILLERY_LOOP,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "DISTILLERY").getStackForm(1L));
 
@@ -4757,7 +4827,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GT_MACHINES_DISTILLERY_LOOP,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "DISTILLERY").getStackForm(1L));
 
@@ -4775,7 +4845,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").setProgressBarTextureName("E_Furnace")
                     .getStackForm(1L));
@@ -4791,7 +4861,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").setProgressBarTextureName("E_Furnace")
                     .getStackForm(1L));
@@ -4807,7 +4877,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").setProgressBarTextureName("E_Furnace")
                     .getStackForm(1L));
@@ -4823,7 +4893,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").setProgressBarTextureName("E_Furnace")
                     .getStackForm(1L));
@@ -4832,14 +4902,14 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
             new MTEBasicMachineWithRecipe(
                 ELECTRIC_FURNACE_IV.ID,
                 "basicmachine.e_furnace.tier.05",
-                "Electron Exitement Processor",
+                "Electron Excitement Processor",
                 5,
                 MachineType.ELECTRIC_FURNACE.tooltipDescription(),
                 RecipeMaps.furnaceRecipes,
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").setProgressBarTextureName("E_Furnace")
                     .getStackForm(1L));
@@ -4855,7 +4925,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").getStackForm(1L));
 
@@ -4870,7 +4940,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").getStackForm(1L));
 
@@ -4885,7 +4955,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").getStackForm(1L));
 
@@ -4900,7 +4970,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").getStackForm(1L));
 
@@ -4915,7 +4985,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").getStackForm(1L));
 
@@ -4930,7 +5000,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").getStackForm(1L));
 
@@ -4945,7 +5015,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_FURNACE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_FURNACE").getStackForm(1L));
     }
@@ -4962,7 +5032,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -4977,7 +5047,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -4992,7 +5062,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5007,7 +5077,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5022,7 +5092,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5037,7 +5107,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5052,7 +5122,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5067,7 +5137,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5082,7 +5152,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5097,7 +5167,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5112,7 +5182,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5127,7 +5197,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTROLYZER").getStackForm(1L));
 
@@ -5694,7 +5764,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5709,7 +5779,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5724,7 +5794,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5739,7 +5809,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5754,7 +5824,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5769,7 +5839,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5784,7 +5854,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5799,7 +5869,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5814,7 +5884,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5829,7 +5899,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5844,7 +5914,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5859,7 +5929,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_COOLING,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "FLUID_SOLIDIFIER").getStackForm(1L));
 
@@ -5877,7 +5947,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -5892,7 +5962,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -5907,7 +5977,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -5922,7 +5992,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -5937,7 +6007,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -5952,7 +6022,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -5967,7 +6037,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -5982,7 +6052,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -5997,7 +6067,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -6012,7 +6082,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -6027,7 +6097,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -6042,7 +6112,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_COMPRESSOR_OP,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PRESS").getStackForm(1L));
 
@@ -6060,7 +6130,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.MAIN_RANDOM_SPARKS,
                 "HAMMER").getStackForm(1L));
 
@@ -6075,7 +6145,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.MAIN_RANDOM_SPARKS,
                 "HAMMER").getStackForm(1L));
 
@@ -6090,7 +6160,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.MAIN_RANDOM_SPARKS,
                 "HAMMER").getStackForm(1L));
 
@@ -6105,7 +6175,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.MAIN_RANDOM_SPARKS,
                 "HAMMER").getStackForm(1L));
 
@@ -6120,7 +6190,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.MAIN_RANDOM_SPARKS,
                 "HAMMER").getStackForm(1L));
 
@@ -6135,7 +6205,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "HAMMER").getStackForm(1L));
 
@@ -6150,7 +6220,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "HAMMER").getStackForm(1L));
 
@@ -6165,7 +6235,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "HAMMER").getStackForm(1L));
 
@@ -6180,7 +6250,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "HAMMER").getStackForm(1L));
 
@@ -6195,7 +6265,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "HAMMER").getStackForm(1L));
 
@@ -6210,7 +6280,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "HAMMER").getStackForm(1L));
 
@@ -6225,7 +6295,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 true,
-                SoundResource.RANDOM_ANVIL_USE,
+                SoundResource.GTCEU_LOOP_FORGE_HAMMER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "HAMMER").getStackForm(1L));
 
@@ -6243,7 +6313,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6258,7 +6328,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6273,7 +6343,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6288,7 +6358,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6303,7 +6373,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6318,7 +6388,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6333,7 +6403,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6348,7 +6418,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6363,7 +6433,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6378,7 +6448,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6393,7 +6463,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6408,7 +6478,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CUT,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LATHE").getStackForm(1L));
 
@@ -6426,7 +6496,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6441,7 +6511,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6456,7 +6526,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6471,7 +6541,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6486,7 +6556,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6501,7 +6571,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6516,7 +6586,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6531,7 +6601,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6546,7 +6616,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6561,7 +6631,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6576,7 +6646,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6591,7 +6661,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 4,
                 1,
                 true,
-                SoundResource.IC2_MACHINES_MAGNETIZER_LOOP,
+                SoundResource.GTCEU_LOOP_ELECTROLYZER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "LASER_ENGRAVER").getStackForm(1L));
 
@@ -6609,7 +6679,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "MACERATOR").getStackForm(1L));
 
@@ -6624,7 +6694,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "MACERATOR").getStackForm(1L));
 
@@ -6639,7 +6709,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6654,7 +6724,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6669,7 +6739,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6684,7 +6754,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6699,7 +6769,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6714,7 +6784,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6729,7 +6799,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6744,7 +6814,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6759,7 +6829,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6774,7 +6844,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 false,
-                SoundResource.IC2_MACHINES_MACERATOR_OP,
+                SoundResource.GTCEU_LOOP_MACERATOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.TOP_SMOKE,
                 "PULVERIZER").getStackForm(1L));
 
@@ -6835,7 +6905,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6850,7 +6920,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6865,7 +6935,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6880,7 +6950,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6895,7 +6965,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6910,7 +6980,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6925,7 +6995,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6940,7 +7010,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6955,7 +7025,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6970,7 +7040,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -6985,7 +7055,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -7000,7 +7070,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "MICROWAVE").getStackForm(1L));
 
@@ -7018,7 +7088,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_OVEN").setProgressBarTextureName("E_Oven")
                     .getStackForm(1L));
@@ -7034,7 +7104,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_OVEN").setProgressBarTextureName("E_Oven")
                     .getStackForm(1L));
@@ -7050,7 +7120,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_OVEN").setProgressBarTextureName("E_Oven")
                     .getStackForm(1L));
@@ -7066,7 +7136,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_OVEN").setProgressBarTextureName("E_Oven")
                     .getStackForm(1L));
@@ -7082,7 +7152,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_ELECTROFURNACE_LOOP,
+                SoundResource.GTCEU_LOOP_HUM,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ELECTRIC_OVEN").setProgressBarTextureName("E_Oven")
                     .getStackForm(1L));
@@ -7100,7 +7170,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7115,7 +7185,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7130,7 +7200,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7145,7 +7215,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7160,7 +7230,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7175,7 +7245,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7190,7 +7260,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7205,7 +7275,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7220,7 +7290,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7235,7 +7305,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7250,7 +7320,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7265,7 +7335,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ORE_WASHER").getStackForm(1L));
 
@@ -7942,6 +8012,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
 
     }
 
+    @Deprecated
     private void registerSlicingMachine() {
         ItemList.Machine_LV_Slicer.set(
             new MTEBasicMachineWithRecipe(
@@ -7949,7 +8020,9 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.01",
                 "Basic Slicing Machine",
                 1,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
                 RecipeMaps.slicerRecipes,
                 2,
                 1,
@@ -7964,7 +8037,9 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.02",
                 "Advanced Slicing Machine",
                 2,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
                 RecipeMaps.slicerRecipes,
                 2,
                 1,
@@ -7979,7 +8054,9 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.03",
                 "Advanced Slicing Machine II",
                 3,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
                 RecipeMaps.slicerRecipes,
                 2,
                 1,
@@ -7994,7 +8071,9 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.04",
                 "Advanced Slicing Machine III",
                 4,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
                 RecipeMaps.slicerRecipes,
                 2,
                 1,
@@ -8009,7 +8088,9 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.05",
                 "Advanced Slicing Machine IV",
                 5,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
                 RecipeMaps.slicerRecipes,
                 2,
                 1,
@@ -8024,7 +8105,9 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.06",
                 "Elite Slicing Machine",
                 6,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
                 slicerRecipes,
                 2,
                 1,
@@ -8039,7 +8122,9 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.07",
                 "Elite Slicing Machine II",
                 7,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
                 slicerRecipes,
                 2,
                 1,
@@ -8054,7 +8139,10 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.08",
                 "Ultimate Quantum Slicer",
                 8,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
+
                 slicerRecipes,
                 2,
                 1,
@@ -8069,7 +8157,10 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.09",
                 "Epic Quantum Slicer",
                 9,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
+
                 slicerRecipes,
                 2,
                 1,
@@ -8084,7 +8175,10 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.10",
                 "Epic Quantum Slicer II",
                 10,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
+
                 slicerRecipes,
                 2,
                 1,
@@ -8099,7 +8193,10 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.11",
                 "Epic Quantum Slicer III",
                 11,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
+
                 slicerRecipes,
                 2,
                 1,
@@ -8114,7 +8211,10 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 "basicmachine.slicer.tier.12",
                 "Epic Quantum Slicer IV",
                 12,
-                MachineType.SLICER.tooltipDescription(),
+                ArrayUtils.add(
+                    MachineType.SLICER.tooltipDescription(),
+                    EnumChatFormatting.YELLOW + "DEPRECATED! Will be removed in next major update"),
+
                 slicerRecipes,
                 2,
                 1,
@@ -8137,7 +8237,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8152,7 +8252,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8167,7 +8267,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8182,7 +8282,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8197,7 +8297,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8212,7 +8312,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8227,7 +8327,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8242,7 +8342,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8257,7 +8357,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8272,7 +8372,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8287,7 +8387,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
 
@@ -8302,7 +8402,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 3,
                 false,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "THERMAL_CENTRIFUGE").getStackForm(1L));
     }
@@ -8319,7 +8419,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8334,7 +8434,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8349,7 +8449,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8364,7 +8464,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8379,7 +8479,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8394,7 +8494,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8409,7 +8509,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8424,7 +8524,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8439,7 +8539,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8454,7 +8554,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8469,7 +8569,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8484,7 +8584,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 1,
                 false,
-                SoundResource.IC2_MACHINES_RECYCLER_OP,
+                SoundResource.GTCEU_LOOP_MOTOR,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "WIREMILL").getStackForm(1L));
 
@@ -8502,7 +8602,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8517,7 +8617,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8532,7 +8632,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8547,7 +8647,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8562,7 +8662,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8577,7 +8677,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8592,7 +8692,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8607,7 +8707,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8622,7 +8722,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8637,7 +8737,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8652,7 +8752,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8667,7 +8767,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "ARC_FURNACE").getStackForm(1L));
 
@@ -8685,7 +8785,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8700,7 +8800,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8715,7 +8815,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8730,7 +8830,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8745,7 +8845,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8760,7 +8860,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8775,7 +8875,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8790,7 +8890,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8805,7 +8905,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8820,7 +8920,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8835,7 +8935,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8850,7 +8950,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 6,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_CENTRIFUGE,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CENTRIFUGE").getStackForm(1L));
 
@@ -8868,7 +8968,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -8883,7 +8983,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -8898,7 +8998,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 4,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -8913,7 +9013,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -8928,7 +9028,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -8943,7 +9043,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -8958,7 +9058,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -8973,7 +9073,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -8988,7 +9088,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -9003,7 +9103,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -9018,7 +9118,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
 
@@ -9033,7 +9133,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 1,
                 9,
                 true,
-                SoundResource.IC2_MACHINES_INDUCTION_LOOP,
+                SoundResource.GTCEU_LOOP_ARC,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "PLASMA_ARC_FURNACE").getStackForm(1L));
     }
@@ -9050,7 +9150,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9065,7 +9165,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9080,7 +9180,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9095,7 +9195,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9110,7 +9210,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9125,7 +9225,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9140,7 +9240,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9155,7 +9255,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9170,7 +9270,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9185,7 +9285,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9200,7 +9300,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
 
@@ -9215,7 +9315,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 2,
                 2,
                 false,
-                SoundResource.IC2_MACHINES_EXTRACTOR_OP,
+                SoundResource.GTCEU_LOOP_BATH,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CANNER").getStackForm(1L));
     }
@@ -10293,7 +10393,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10308,7 +10408,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10323,7 +10423,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10338,7 +10438,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10353,7 +10453,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10368,7 +10468,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10383,7 +10483,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10398,7 +10498,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10413,7 +10513,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10428,7 +10528,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10443,7 +10543,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10458,7 +10558,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10473,7 +10573,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
 
@@ -10488,7 +10588,7 @@ public class LoaderMetaTileEntities implements Runnable { // TODO CHECK CIRCUIT 
                 6,
                 1,
                 true,
-                SoundResource.NONE,
+                SoundResource.GTCEU_LOOP_ASSEMBLER,
                 MTEBasicMachineWithRecipe.SpecialEffects.NONE,
                 "CIRCUITASSEMBLER").getStackForm(1L));
     }
