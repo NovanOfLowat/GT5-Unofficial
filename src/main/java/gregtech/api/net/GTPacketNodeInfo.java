@@ -7,7 +7,7 @@ import net.minecraft.world.IBlockAccess;
 import com.google.common.io.ByteArrayDataInput;
 
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
-import gregtech.common.tileentities.machines.multi.utilities.MTEResearchCompleter;
+import gregtech.common.tileentities.machines.multi.MTEResearchCompleter;
 import io.netty.buffer.ByteBuf;
 
 public class GTPacketNodeInfo extends GTPacket {

@@ -22,7 +22,7 @@ import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.modularui2.GTGuis;
 import gregtech.api.render.TextureFactory;
-import gregtech.common.tileentities.machines.multi.processing.MTEIndustrialElectromagneticSeparator;
+import gregtech.common.tileentities.machines.multi.MTEIndustrialElectromagneticSeparator;
 
 public class MTEHatchMagnet extends MTEHatch {
 

@@ -1,4 +1,4 @@
-// copied from gregtech.common.tileentities.machines.multi.generators.MTELargeTurbine
+// copied from gregtech.common.tileentities.machines.multi.MTELargeTurbine
 // The origin one in gt made the abstract method private so i can't imp it.
 package goodgenerator.blocks.tileEntity.base;
 

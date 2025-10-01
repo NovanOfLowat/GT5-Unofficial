@@ -7,7 +7,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import gregtech.common.tileentities.machines.multi.utilities.MTEHeatExchanger;
+import gregtech.common.tileentities.machines.multi.MTEHeatExchanger;
 
 public class LHECoolantRegistry {
 

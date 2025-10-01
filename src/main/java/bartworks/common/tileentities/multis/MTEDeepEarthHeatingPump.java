@@ -43,7 +43,7 @@ import gregtech.api.metatileentity.implementations.MTEHatchInput;
 import gregtech.api.util.GTModHandler;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
-import gregtech.common.tileentities.machines.multi.utilities.MTEDrillerBase;
+import gregtech.common.tileentities.machines.multi.MTEDrillerBase;
 
 public class MTEDeepEarthHeatingPump extends MTEDrillerBase {
 

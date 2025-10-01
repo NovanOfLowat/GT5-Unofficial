@@ -17,8 +17,8 @@ import gregtech.api.util.GTModHandler;
 import gregtech.api.util.GTRecipe;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MethodsReturnNonnullByDefault;
-import gregtech.common.tileentities.machines.multi.generators.MTELargeBoilerBronze;
-import gregtech.common.tileentities.machines.multi.generators.MTELargeBoilerSteel;
+import gregtech.common.tileentities.machines.multi.MTELargeBoilerBronze;
+import gregtech.common.tileentities.machines.multi.MTELargeBoilerSteel;
 
 @SuppressWarnings({ "unused", "UnusedReturnValue" })
 @ParametersAreNonnullByDefault
