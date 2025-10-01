@@ -117,7 +117,7 @@ public class MTEIndustrialMixerModern extends MTEExtendedPowerMultiBlockBase<MTE
     @Override
     protected MultiblockTooltipBuilder createTooltip() {
         MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
-        tt.addMachineType("Mixer, IMM")
+        tt.addMachineType("Placeholder")
             .addInfo("Placeholder for a tooltip")
             .toolTipFinisher();
         return tt;

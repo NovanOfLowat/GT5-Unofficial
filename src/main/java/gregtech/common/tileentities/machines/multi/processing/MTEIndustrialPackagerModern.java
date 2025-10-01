@@ -1,32 +1,36 @@
 package gregtech.common.tileentities.machines.multi.processing;
 
-import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofBlock;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.onElementPass;
+import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
 import static gregtech.api.enums.HatchElement.Energy;
 import static gregtech.api.enums.HatchElement.InputBus;
-import static gregtech.api.enums.HatchElement.InputHatch;
 import static gregtech.api.enums.HatchElement.Maintenance;
+import static gregtech.api.enums.HatchElement.Muffler;
 import static gregtech.api.enums.HatchElement.OutputBus;
-import static gregtech.api.enums.HatchElement.OutputHatch;
-import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_MULTI_BREWERY;
-import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_MULTI_BREWERY_ACTIVE;
-import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_MULTI_BREWERY_ACTIVE_GLOW;
-import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_MULTI_BREWERY_GLOW;
 import static gregtech.api.util.GTStructureUtility.buildHatchAdder;
-import static gregtech.api.util.GTStructureUtility.chainAllGlasses;
-import static gregtech.api.util.GTStructureUtility.ofFrame;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 
-import gregtech.api.GregTechAPI;
-import gregtech.api.enums.Materials;
-import gregtech.api.enums.Textures;
+import gregtech.api.casing.Casings;
+import gregtech.api.gui.modularui.GTUITextures;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
@@ -37,53 +41,42 @@ import gregtech.api.recipe.RecipeMaps;
 import gregtech.api.render.TextureFactory;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
-import gregtech.common.blocks.BlockCasings10;
-import gregtech.common.misc.GTStructureChannels;
+import gregtech.common.pollution.PollutionConfig;
+import gtPlusPlus.xmod.gregtech.common.blocks.textures.TexturesGtBlock;
+import gtPlusPlus.xmod.gregtech.common.tileentities.machines.multi.gui.MTEAmazonPackagerGui;
 
-public class MTEIndustrialPackagerModern extends MTEExtendedPowerMultiBlockBase<MTEIndustrialPackagerModern>
+public class MTEIndustrialPackagerModern
+    extends MTEExtendedPowerMultiBlockBase<MTEIndustrialPackagerModern>
     implements ISurvivalConstructable {
 
+    private static final int MACHINEMODE_PACKAGER = 0;
+    private static final int MACHINEMODE_UNPACKAGER = 1;
+
+    private static final int HORIZONTAL_OFFSET = 1;
+    private static final int VERTICAL_OFFSET = 1;
+    private static final int DEPTH_OFFSET = 0;
+
     private static final String STRUCTURE_PIECE_MAIN = "main";
-    private static final IStructureDefinition<MTEIndustrialPackagerModern> STRUCTURE_DEFINITION = StructureDefinition
-        .<MTEIndustrialPackagerModern>builder()
+
+    private static final IStructureDefinition<MTEIndustrialPackagerModern> STRUCTURE_DEFINITION = StructureDefinition.<MTEIndustrialPackagerModern>builder()
         .addShape(
             STRUCTURE_PIECE_MAIN,
-            // spotless:off
-            new String[][]{{
-                "BBB",
-                "BBB",
-                "B~B",
-                "BBB",
-                "C C"
-            },{
-                "BBB",
-                "A A",
-                "A A",
-                "BBB",
-                "   "
-            },{
-                "BBB",
-                "BAB",
-                "BAB",
-                "BBB",
-                "C C"
-            }})
-        //spotless:on
+            transpose(new String[][] { { "CCC", "CCC", "CCC" }, { "C~C", "C-C", "CCC" }, { "CCC", "CCC", "CCC" } }))
         .addElement(
-            'B',
+            'C',
             buildHatchAdder(MTEIndustrialPackagerModern.class)
-                .atLeast(InputBus, OutputBus, InputHatch, OutputHatch, Maintenance, Energy)
-                .casingIndex(((BlockCasings10) GregTechAPI.sBlockCasings10).getTextureIndex(15))
+                .atLeast(InputBus, OutputBus, Maintenance, Energy, Muffler)
+                .casingIndex(Casings.AmazonPackagerCasing.textureId)
                 .dot(1)
                 .buildAndChain(
                     onElementPass(
                         MTEIndustrialPackagerModern::onCasingAdded,
-                        ofBlock(GregTechAPI.sBlockCasings10, 15))))
-        .addElement('A', chainAllGlasses())
-        .addElement('C', ofFrame(Materials.Steel))
+                        Casings.AmazonPackagerCasing.asElement())))
         .build();
 
-    public MTEIndustrialPackagerModern(final int aID, final String aName, final String aNameRegional) {
+    private int mCasingAmount;
+
+    public MTEIndustrialPackagerModern(int aID, String aName, String aNameRegional) {
         super(aID, aName, aNameRegional);
     }
 
@@ -92,88 +85,34 @@ public class MTEIndustrialPackagerModern extends MTEExtendedPowerMultiBlockBase<
     }
 
     @Override
+    public IMetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
+        return new MTEIndustrialPackagerModern(mName);
+    }
+
+    @Override
     public IStructureDefinition<MTEIndustrialPackagerModern> getStructureDefinition() {
         return STRUCTURE_DEFINITION;
     }
 
     @Override
-    public IMetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-        return new MTEIndustrialPackagerModern(this.mName);
-    }
-
-    @Override
-    public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, ForgeDirection side, ForgeDirection aFacing,
-        int colorIndex, boolean aActive, boolean redstoneLevel) {
-        ITexture[] rTexture;
-        if (side == aFacing) {
-            if (aActive) {
-                rTexture = new ITexture[] {
-                    Textures.BlockIcons
-                        .getCasingTextureForId(GTUtility.getCasingTextureIndex(GregTechAPI.sBlockCasings10, 15)),
-                    TextureFactory.builder()
-                        .addIcon(OVERLAY_FRONT_MULTI_BREWERY_ACTIVE)
-                        .extFacing()
-                        .build(),
-                    TextureFactory.builder()
-                        .addIcon(OVERLAY_FRONT_MULTI_BREWERY_ACTIVE_GLOW)
-                        .extFacing()
-                        .glow()
-                        .build() };
-            } else {
-                rTexture = new ITexture[] {
-                    Textures.BlockIcons
-                        .getCasingTextureForId(GTUtility.getCasingTextureIndex(GregTechAPI.sBlockCasings10, 15)),
-                    TextureFactory.builder()
-                        .addIcon(OVERLAY_FRONT_MULTI_BREWERY)
-                        .extFacing()
-                        .build(),
-                    TextureFactory.builder()
-                        .addIcon(OVERLAY_FRONT_MULTI_BREWERY_GLOW)
-                        .extFacing()
-                        .glow()
-                        .build() };
-            }
-        } else {
-            rTexture = new ITexture[] { Textures.BlockIcons
-                .getCasingTextureForId(GTUtility.getCasingTextureIndex(GregTechAPI.sBlockCasings10, 15)) };
-        }
-        return rTexture;
-    }
-
-    @Override
-    protected MultiblockTooltipBuilder createTooltip() {
-        MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
-        tt.addMachineType("Brewery")
-            .addInfo("50% faster than singleblock machines of the same voltage")
-            .addInfo("Gains 4 parallels per voltage tier")
-            .beginStructureBlock(3, 5, 3, true)
-            .addController("Front Center")
-            .addCasingInfoMin("Reinforced Wooden Casing", 14, false)
-            .addCasingInfoExactly("Any Tiered Glass", 6, false)
-            .addCasingInfoExactly("Steel Frame Box", 4, false)
-            .addInputBus("Any Wooden Casing", 1)
-            .addOutputBus("Any Wooden Casing", 1)
-            .addInputHatch("Any Wooden Casing", 1)
-            .addOutputHatch("Any Wooden Casing", 1)
-            .addEnergyHatch("Any Wooden Casing", 1)
-            .addMaintenanceHatch("Any Wooden Casing", 1)
-            .addSubChannelUsage(GTStructureChannels.BOROGLASS)
-            .toolTipFinisher();
-        return tt;
-    }
-
-    @Override
     public void construct(ItemStack stackSize, boolean hintsOnly) {
-        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, 1, 2, 0);
+        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET);
     }
 
     @Override
     public int survivalConstruct(ItemStack stackSize, int elementBudget, ISurvivalBuildEnvironment env) {
         if (mMachine) return -1;
-        return survivalBuildPiece(STRUCTURE_PIECE_MAIN, stackSize, 1, 2, 0, elementBudget, env, false, true);
+        return survivalBuildPiece(
+            STRUCTURE_PIECE_MAIN,
+            stackSize,
+            HORIZONTAL_OFFSET,
+            VERTICAL_OFFSET,
+            DEPTH_OFFSET,
+            elementBudget,
+            env,
+            false,
+            true);
     }
-
-    private int mCasingAmount;
 
     private void onCasingAdded() {
         mCasingAmount++;
@@ -182,23 +121,121 @@ public class MTEIndustrialPackagerModern extends MTEExtendedPowerMultiBlockBase<
     @Override
     public boolean checkMachine(IGregTechTileEntity aBaseMetaTileEntity, ItemStack aStack) {
         mCasingAmount = 0;
-        return checkPiece(STRUCTURE_PIECE_MAIN, 1, 2, 0) && mCasingAmount >= 14;
+        if (!checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET)) return false;
+        if (mMaintenanceHatches.isEmpty()) return false;
+        if (mCasingAmount < 10) return false;
+        return true;
+    }
+
+    @Override
+    public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, ForgeDirection side, ForgeDirection aFacing,
+        int colorIndex, boolean aActive, boolean redstoneLevel) {
+        if (side == aFacing) {
+            if (aActive) {
+                return new ITexture[] { Casings.AmazonPackagerCasing.getCasingTexture(), TextureFactory.builder()
+                    .addIcon(TexturesGtBlock.oMCAAmazonPackagerActive)
+                    .extFacing()
+                    .build(),
+                    TextureFactory.builder()
+                        .addIcon(TexturesGtBlock.oMCAAmazonPackagerActiveGlow)
+                        .extFacing()
+                        .glow()
+                        .build() };
+            } else {
+                return new ITexture[] { Casings.AmazonPackagerCasing.getCasingTexture(), TextureFactory.builder()
+                    .addIcon(TexturesGtBlock.oMCAAmazonPackager)
+                    .extFacing()
+                    .build(),
+                    TextureFactory.builder()
+                        .addIcon(TexturesGtBlock.oMCAAmazonPackagerGlow)
+                        .extFacing()
+                        .glow()
+                        .build() };
+            }
+        }
+        return new ITexture[] { Casings.AmazonPackagerCasing.getCasingTexture() };
+    }
+
+    @Override
+    protected MultiblockTooltipBuilder createTooltip() {
+        MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
+        tt.addMachineType("Placeholder")
+            .addInfo("Placeholder for a tooltip")
+            .toolTipFinisher();
+        return tt;
+    }
+
+    @Override
+    public RecipeMap<?> getRecipeMap() {
+        return (machineMode == MACHINEMODE_PACKAGER) ? RecipeMaps.packagerRecipes : RecipeMaps.unpackagerRecipes;
+    }
+
+    @Nonnull
+    @Override
+    public Collection<RecipeMap<?>> getAvailableRecipeMaps() {
+        return Arrays.asList(RecipeMaps.packagerRecipes, RecipeMaps.unpackagerRecipes);
     }
 
     @Override
     protected ProcessingLogic createProcessingLogic() {
-        return new ProcessingLogic().setSpeedBonus(1F / 1.5F)
+        return new ProcessingLogic().noRecipeCaching()
+            .setSpeedBonus(1F / 6F)
+            .setEuModifier(0.75F)
             .setMaxParallelSupplier(this::getTrueParallel);
     }
 
     @Override
     public int getMaxParallelRecipes() {
-        return (4 * GTUtility.getTier(this.getMaxInputVoltage()));
+        return (16 * GTUtility.getTier(this.getMaxInputVoltage()));
     }
 
     @Override
-    public RecipeMap<?> getRecipeMap() {
-        return RecipeMaps.brewingRecipes;
+    public int getPollutionPerSecond(ItemStack aStack) {
+        return PollutionConfig.pollutionPerSecondMultiPackager;
+    }
+
+    @Override
+    public void loadNBTData(NBTTagCompound aNBT) {
+        if (aNBT.hasKey("mPackageMode")) {
+            machineMode = aNBT.getInteger("mPackageMode");
+        }
+        super.loadNBTData(aNBT);
+    }
+
+    @Override
+    public void getWailaNBTData(EntityPlayerMP player, TileEntity tile, NBTTagCompound tag, World world, int x, int y,
+        int z) {
+        super.getWailaNBTData(player, tile, tag, world, x, y, z);
+        tag.setString("mode", getMachineModeName());
+    }
+
+    @Override
+    public String getMachineModeName() {
+        return net.minecraft.util.StatCollector.translateToLocal("GT5U.GTPP_MULTI_PACKAGER.mode." + machineMode);
+    }
+
+    @Override
+    public boolean supportsMachineModeSwitch() {
+        return true;
+    }
+
+    public void onModeChangeByScrewdriver(ForgeDirection side, EntityPlayer aPlayer, float aX, float aY, float aZ) {
+        setMachineMode(nextMachineMode());
+        GTUtility.sendChatToPlayer(
+            aPlayer,
+            net.minecraft.util.StatCollector
+                .translateToLocalFormatted("GT5U.MULTI_MACHINE_CHANGE", getMachineModeName()));
+    }
+
+    @Override
+    public void setMachineModeIcons() {
+        machineModeIcons.add(GTUITextures.OVERLAY_BUTTON_MACHINEMODE_PACKAGER);
+        machineModeIcons.add(GTUITextures.OVERLAY_BUTTON_MACHINEMODE_UNPACKAGER);
+    }
+
+    @Override
+    protected @NotNull MTEAmazonPackagerGui getGui() {
+        return new MTEAmazonPackagerGui(this);
     }
 
     @Override

@@ -291,6 +291,8 @@ public enum Casings implements ICasing {
         (() -> ModBlocks.blockCasingsMisc, 3, -1),
     HeatProofCasing
         (() -> GregTechAPI.sBlockCasings1, 11,11),
+    AmazonPackagerCasing
+        (() -> ModBlocks.blockCasings3Misc, 9,gtpp(2, 9)),
 
     MagicCasing
         (() -> Loaders.magicCasing, 0, -1),
