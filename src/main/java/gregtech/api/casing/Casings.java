@@ -307,6 +307,8 @@ public enum Casings implements ICasing {
         (() -> GregTechAPI.sBlockCasings8, 0, 176),
     PipeCasingPTFE
         (() -> GregTechAPI.sBlockCasings8, 1, -1),
+    PyrolyseCasing
+        (() -> GregTechAPI.sBlockCasingsNH, 2, 1090),
 
     MagicCasing
         (() -> Loaders.magicCasing, 0, -1),

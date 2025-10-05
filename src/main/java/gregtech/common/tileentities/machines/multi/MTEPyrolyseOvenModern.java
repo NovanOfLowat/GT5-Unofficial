@@ -1,87 +1,82 @@
 package gregtech.common.tileentities.machines.multi;
 
-import static com.gtnewhorizon.structurelib.structure.StructureUtility.ofBlock;
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.onElementPass;
-import static gregtech.api.enums.HatchElement.Energy;
-import static gregtech.api.enums.HatchElement.InputBus;
-import static gregtech.api.enums.HatchElement.InputHatch;
-import static gregtech.api.enums.HatchElement.Maintenance;
-import static gregtech.api.enums.HatchElement.OutputBus;
-import static gregtech.api.enums.HatchElement.OutputHatch;
-import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_MULTI_BREWERY;
-import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_MULTI_BREWERY_ACTIVE;
-import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_MULTI_BREWERY_ACTIVE_GLOW;
-import static gregtech.api.enums.Textures.BlockIcons.OVERLAY_FRONT_MULTI_BREWERY_GLOW;
-import static gregtech.api.util.GTStructureUtility.buildHatchAdder;
-import static gregtech.api.util.GTStructureUtility.chainAllGlasses;
-import static gregtech.api.util.GTStructureUtility.ofFrame;
+import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
+import static gregtech.api.enums.HatchElement.*;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.gtnewhorizon.structurelib.alignment.constructable.ISurvivalConstructable;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.ISurvivalBuildEnvironment;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 
-import gregtech.api.GregTechAPI;
-import gregtech.api.enums.Materials;
-import gregtech.api.enums.Textures;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import gregtech.GTMod;
+import gregtech.api.casing.Casings;
+import gregtech.api.enums.HeatingCoilLevel;
+import gregtech.api.enums.SoundResource;
+import gregtech.api.enums.Textures.BlockIcons;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.logic.ProcessingLogic;
-import gregtech.api.metatileentity.implementations.MTEExtendedPowerMultiBlockBase;
+import gregtech.api.metatileentity.implementations.MTEEnhancedMultiBlockBase;
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.recipe.RecipeMaps;
+import gregtech.api.recipe.check.CheckRecipeResult;
 import gregtech.api.render.TextureFactory;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MultiblockTooltipBuilder;
-import gregtech.common.blocks.BlockCasings10;
-import gregtech.common.misc.GTStructureChannels;
 
-public class MTEPyrolyseOvenModern extends MTEExtendedPowerMultiBlockBase<MTEPyrolyseOvenModern>
+public class MTEPyrolyseOvenModern extends MTEEnhancedMultiBlockBase<MTEPyrolyseOvenModern>
     implements ISurvivalConstructable {
 
+    private static final int HORIZONTAL_OFFSET = 2;
+    private static final int VERTICAL_OFFSET = 3;
+    private static final int DEPTH_OFFSET = 0;
     private static final String STRUCTURE_PIECE_MAIN = "main";
+
+    private HeatingCoilLevel coilHeat;
+    private int mCasingAmount;
+
     private static final IStructureDefinition<MTEPyrolyseOvenModern> STRUCTURE_DEFINITION = StructureDefinition
         .<MTEPyrolyseOvenModern>builder()
         .addShape(
             STRUCTURE_PIECE_MAIN,
-            // spotless:off
-            new String[][]{{
-                "BBB",
-                "BBB",
-                "B~B",
-                "BBB",
-                "C C"
-            },{
-                "BBB",
-                "A A",
-                "A A",
-                "BBB",
-                "   "
-            },{
-                "BBB",
-                "BAB",
-                "BAB",
-                "BBB",
-                "C C"
-            }})
-        //spotless:on
+            transpose(
+                new String[][] { { "ccccc", "ctttc", "ctttc", "ctttc", "ccccc" },
+                    { "ccccc", "c---c", "c---c", "c---c", "ccccc" }, { "ccccc", "c---c", "c---c", "c---c", "ccccc" },
+                    { "bb~bb", "bCCCb", "bCCCb", "bCCCb", "bbbbb" }, }))
+        .addElement('c', onElementPass(MTEPyrolyseOvenModern::onCasingAdded, Casings.PyrolyseCasing.asElement()))
         .addElement(
-            'B',
-            buildHatchAdder(MTEPyrolyseOvenModern.class)
-                .atLeast(InputBus, OutputBus, InputHatch, OutputHatch, Maintenance, Energy)
-                .casingIndex(((BlockCasings10) GregTechAPI.sBlockCasings10).getTextureIndex(15))
+            'C',
+            gregtech.api.util.GTStructureUtility.activeCoils(
+                gregtech.api.util.GTStructureUtility
+                    .ofCoil(MTEPyrolyseOvenModern::setCoilLevel, MTEPyrolyseOvenModern::getCoilLevel)))
+        .addElement(
+            'b',
+            gregtech.api.util.GTStructureUtility.buildHatchAdder(MTEPyrolyseOvenModern.class)
+                .atLeast(OutputBus, OutputHatch, Energy, Maintenance)
+                .casingIndex(Casings.PyrolyseCasing.textureId)
                 .dot(1)
-                .buildAndChain(
-                    onElementPass(MTEPyrolyseOvenModern::onCasingAdded, ofBlock(GregTechAPI.sBlockCasings10, 15))))
-        .addElement('A', chainAllGlasses())
-        .addElement('C', ofFrame(Materials.Steel))
+                .buildAndChain(onElementPass(MTEPyrolyseOvenModern::onCasingAdded, Casings.PyrolyseCasing.asElement())))
+        .addElement(
+            't',
+            gregtech.api.util.GTStructureUtility.buildHatchAdder(MTEPyrolyseOvenModern.class)
+                .atLeast(InputBus, InputHatch, Muffler)
+                .casingIndex(Casings.PyrolyseCasing.textureId)
+                .dot(2)
+                .buildAndChain(onElementPass(MTEPyrolyseOvenModern::onCasingAdded, Casings.PyrolyseCasing.asElement())))
         .build();
 
-    public MTEPyrolyseOvenModern(final int aID, final String aName, final String aNameRegional) {
+    public MTEPyrolyseOvenModern(int aID, String aName, String aNameRegional) {
         super(aID, aName, aNameRegional);
     }
 
@@ -90,113 +85,111 @@ public class MTEPyrolyseOvenModern extends MTEExtendedPowerMultiBlockBase<MTEPyr
     }
 
     @Override
+    public IMetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
+        return new MTEPyrolyseOvenModern(mName);
+    }
+
+    @Override
     public IStructureDefinition<MTEPyrolyseOvenModern> getStructureDefinition() {
         return STRUCTURE_DEFINITION;
     }
 
     @Override
-    public IMetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-        return new MTEPyrolyseOvenModern(this.mName);
-    }
-
-    @Override
-    public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, ForgeDirection side, ForgeDirection aFacing,
-        int colorIndex, boolean aActive, boolean redstoneLevel) {
-        ITexture[] rTexture;
-        if (side == aFacing) {
-            if (aActive) {
-                rTexture = new ITexture[] {
-                    Textures.BlockIcons
-                        .getCasingTextureForId(GTUtility.getCasingTextureIndex(GregTechAPI.sBlockCasings10, 15)),
-                    TextureFactory.builder()
-                        .addIcon(OVERLAY_FRONT_MULTI_BREWERY_ACTIVE)
-                        .extFacing()
-                        .build(),
-                    TextureFactory.builder()
-                        .addIcon(OVERLAY_FRONT_MULTI_BREWERY_ACTIVE_GLOW)
-                        .extFacing()
-                        .glow()
-                        .build() };
-            } else {
-                rTexture = new ITexture[] {
-                    Textures.BlockIcons
-                        .getCasingTextureForId(GTUtility.getCasingTextureIndex(GregTechAPI.sBlockCasings10, 15)),
-                    TextureFactory.builder()
-                        .addIcon(OVERLAY_FRONT_MULTI_BREWERY)
-                        .extFacing()
-                        .build(),
-                    TextureFactory.builder()
-                        .addIcon(OVERLAY_FRONT_MULTI_BREWERY_GLOW)
-                        .extFacing()
-                        .glow()
-                        .build() };
-            }
-        } else {
-            rTexture = new ITexture[] { Textures.BlockIcons
-                .getCasingTextureForId(GTUtility.getCasingTextureIndex(GregTechAPI.sBlockCasings10, 15)) };
-        }
-        return rTexture;
-    }
-
-    @Override
-    protected MultiblockTooltipBuilder createTooltip() {
-        MultiblockTooltipBuilder tt = new MultiblockTooltipBuilder();
-        tt.addMachineType("Brewery")
-            .addInfo("50% faster than singleblock machines of the same voltage")
-            .addInfo("Gains 4 parallels per voltage tier")
-            .beginStructureBlock(3, 5, 3, true)
-            .addController("Front Center")
-            .addCasingInfoMin("Reinforced Wooden Casing", 14, false)
-            .addCasingInfoExactly("Any Tiered Glass", 6, false)
-            .addCasingInfoExactly("Steel Frame Box", 4, false)
-            .addInputBus("Any Wooden Casing", 1)
-            .addOutputBus("Any Wooden Casing", 1)
-            .addInputHatch("Any Wooden Casing", 1)
-            .addOutputHatch("Any Wooden Casing", 1)
-            .addEnergyHatch("Any Wooden Casing", 1)
-            .addMaintenanceHatch("Any Wooden Casing", 1)
-            .addSubChannelUsage(GTStructureChannels.BOROGLASS)
-            .toolTipFinisher();
-        return tt;
-    }
-
-    @Override
     public void construct(ItemStack stackSize, boolean hintsOnly) {
-        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, 1, 2, 0);
+        buildPiece(STRUCTURE_PIECE_MAIN, stackSize, hintsOnly, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET);
     }
 
     @Override
     public int survivalConstruct(ItemStack stackSize, int elementBudget, ISurvivalBuildEnvironment env) {
         if (mMachine) return -1;
-        return survivalBuildPiece(STRUCTURE_PIECE_MAIN, stackSize, 1, 2, 0, elementBudget, env, false, true);
+        return survivalBuildPiece(
+            STRUCTURE_PIECE_MAIN,
+            stackSize,
+            HORIZONTAL_OFFSET,
+            VERTICAL_OFFSET,
+            DEPTH_OFFSET,
+            elementBudget,
+            env,
+            false,
+            true);
     }
-
-    private int mCasingAmount;
 
     private void onCasingAdded() {
         mCasingAmount++;
     }
 
+    public HeatingCoilLevel getCoilLevel() {
+        return coilHeat;
+    }
+
+    private void setCoilLevel(HeatingCoilLevel aCoilLevel) {
+        coilHeat = aCoilLevel;
+    }
+
     @Override
     public boolean checkMachine(IGregTechTileEntity aBaseMetaTileEntity, ItemStack aStack) {
+        coilHeat = HeatingCoilLevel.None;
         mCasingAmount = 0;
-        return checkPiece(STRUCTURE_PIECE_MAIN, 1, 2, 0) && mCasingAmount >= 14;
+        if (checkPiece(STRUCTURE_PIECE_MAIN, HORIZONTAL_OFFSET, VERTICAL_OFFSET, DEPTH_OFFSET)) return false;
+        if (mMaintenanceHatches.size() == 1) return false;
+        if (!mMufflerHatches.isEmpty()) return false;
+        return mCasingAmount >= 60;
     }
 
     @Override
-    protected ProcessingLogic createProcessingLogic() {
-        return new ProcessingLogic().setSpeedBonus(1F / 1.5F)
-            .setMaxParallelSupplier(this::getTrueParallel);
+    public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, ForgeDirection sideDirection,
+        ForgeDirection facingDirection, int colorIndex, boolean active, boolean redstoneLevel) {
+        if (sideDirection == facingDirection) {
+            if (active) return new ITexture[] { Casings.PyrolyseCasing.getCasingTexture(), TextureFactory.builder()
+                .addIcon(BlockIcons.OVERLAY_FRONT_PYROLYSE_OVEN_ACTIVE)
+                .extFacing()
+                .build(),
+                TextureFactory.builder()
+                    .addIcon(BlockIcons.OVERLAY_FRONT_PYROLYSE_OVEN_ACTIVE_GLOW)
+                    .extFacing()
+                    .glow()
+                    .build() };
+            return new ITexture[] { Casings.PyrolyseCasing.getCasingTexture(), TextureFactory.builder()
+                .addIcon(BlockIcons.OVERLAY_FRONT_PYROLYSE_OVEN)
+                .extFacing()
+                .build(),
+                TextureFactory.builder()
+                    .addIcon(BlockIcons.OVERLAY_FRONT_PYROLYSE_OVEN_GLOW)
+                    .extFacing()
+                    .glow()
+                    .build() };
+        }
+        return new ITexture[] { Casings.PyrolyseCasing.getCasingTexture() };
     }
 
     @Override
-    public int getMaxParallelRecipes() {
-        return (4 * GTUtility.getTier(this.getMaxInputVoltage()));
+    protected MultiblockTooltipBuilder createTooltip() {
+        return new MultiblockTooltipBuilder().addMachineType("Coke Oven")
+            .addInfo("Placeholder for tooltip")
+            .toolTipFinisher();
     }
 
     @Override
     public RecipeMap<?> getRecipeMap() {
-        return RecipeMaps.brewingRecipes;
+        return RecipeMaps.pyrolyseRecipes;
+    }
+
+    @Override
+    protected ProcessingLogic createProcessingLogic() {
+        return new ProcessingLogic() {
+
+            @NotNull
+            @Override
+            public CheckRecipeResult process() {
+                setSpeedBonus(2f / (1 + coilHeat.getTier()));
+                return super.process();
+            }
+        };
+    }
+
+    @Override
+    public boolean supportsSingleRecipeLocking() {
+        return true;
     }
 
     @Override
@@ -215,7 +208,26 @@ public class MTEPyrolyseOvenModern extends MTEExtendedPowerMultiBlockBase<MTEPyr
     }
 
     @Override
-    public boolean supportsSingleRecipeLocking() {
-        return true;
+    public boolean onWireCutterRightClick(ForgeDirection side, ForgeDirection wrenchingSide, EntityPlayer aPlayer,
+        float aX, float aY, float aZ, ItemStack aTool) {
+        if (aPlayer.isSneaking()) {
+            batchMode = !batchMode;
+            GTUtility.sendChatToPlayer(
+                aPlayer,
+                StatCollector.translateToLocal(batchMode ? "misc.BatchModeTextOn" : "misc.BatchModeTextOff"));
+            return true;
+        }
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    protected SoundResource getActivitySoundLoop() {
+        return SoundResource.GTCEU_LOOP_FIRE;
+    }
+
+    @Override
+    public int getPollutionPerSecond(ItemStack aStack) {
+        return GTMod.proxy.mPollutionPyrolyseOvenPerSecond;
     }
 }
